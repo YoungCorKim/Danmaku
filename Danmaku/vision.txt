@@ -1,0 +1,30 @@
+Vision for Danmaku (Deliverable 1)
+
+This text describes the planned game for the semester deliverable.
+
+High-level vision:
+- A top-down bullet-hell shooter consisting of 4 phases: regular waves, mid-boss, more waves, final boss.
+- Gameplay lasts ~2-3 minutes for the demo. Player has lives and score.
+
+Required features for Deliverable 1 (implemented or scaffolded):
+1. Player
+  - 8-direction movement via arrow keys or WASD
+  - Normal and Slow mode (hold Shift for slow precision)
+  - Small hitbox used for precise dodging
+
+2. Enemies and bosses
+  - At least two grunt enemy types (A and B) and two bosses (mid and final).
+  - Enemies can move and fire bullets; bosses have staged attacks.
+
+3. Systems
+  - Bullet pooling via a BulletFactory to support many simultaneous bullets without GC spikes.
+  - EnemyFactory for spawning and reusing enemy objects.
+  - Simple stage flow manager (to be implemented) that sequences waves and boss fights.
+
+Implementation notes / next steps:
+- Replace placeholder textures (`player`, `bullet`, `enemyA`, `enemyB`, `midboss`, `finalboss`) with art in `Content/Content.mgcb` and rebuild content.
+- Implement enemy patterns and boss stages (mid boss and final boss with at least two distinct final boss stages).
+- Add collision detection, health, scoring, and UI.
+- Polish: audio, visual effects, and packaging.
+
+This file will be committed to the repository as part of Deliverable 1.
