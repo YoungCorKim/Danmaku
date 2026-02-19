@@ -61,7 +61,7 @@ public class StageManager
                     // spawn a single mid boss near top center
                     var vp = ((Game1)_game).GraphicsDevice.Viewport;
                     var pos = new Microsoft.Xna.Framework.Vector2(vp.Width / 2f, 120f);
-                    _midFactory.Spawn(pos, Vector2.Zero, 10);
+                    _midFactory.Spawn(pos, Vector2.Zero, 10, Enemy.PatternType.Spiral, 0.05f);
                     _spawnTimer = 0f;
                 }
                 if (_stageTimer >= _midBossDuration) Transition(Stage.Regular2);
@@ -76,7 +76,7 @@ public class StageManager
                     var vp = ((Game1)_game).GraphicsDevice.Viewport;
                     var pos = new Microsoft.Xna.Framework.Vector2(vp.Width / 2f, 100f);
                     // spawn final boss with higher health
-                    _finalFactory.Spawn(pos, Vector2.Zero, 50);
+                    _finalFactory.Spawn(pos, Vector2.Zero, 50, Enemy.PatternType.Ring, 1.2f);
                     _spawnTimer = 0f;
                 }
                 if (_stageTimer >= _finalBossDuration) Transition(Stage.Finished);
@@ -95,7 +95,8 @@ public class StageManager
             var vp = ((Game1)_game).GraphicsDevice.Viewport;
             var x = (float)(50 + (new Random()).NextDouble() * (vp.Width - 100));
             var pos = new Vector2(x, -20f);
-            a.Spawn(pos, new Vector2(0, 40f), 1);
+            // A-type: aimed shots at player occasionally
+            a.Spawn(pos, new Vector2(0, 40f), 1, Enemy.PatternType.Aim, 1.2f);
 
             // occasionally spawn B-type moving diagonally
             if (new Random().NextDouble() < 0.35)
@@ -103,7 +104,8 @@ public class StageManager
                 var x2 = (float)(50 + (new Random()).NextDouble() * (vp.Width - 100));
                 var dir = new Vector2((float)(new Random().NextDouble() * 2 - 1), 0.5f);
                 dir.Normalize();
-                b.Spawn(new Vector2(x2, -40f), dir * 80f, 1);
+                // B-type: wave/fan shots
+                b.Spawn(new Vector2(x2, -40f), dir * 80f, 1, Enemy.PatternType.Wave, 1.5f);
             }
 
             _spawnTimer = 0f;

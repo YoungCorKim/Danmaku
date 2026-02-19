@@ -27,6 +27,7 @@ public class Game1 : Game
     private SpriteFont _font;
     private StageManager _stageManager;
     private int _score = 0;
+    private Texture2D _whitePixel;
     
     // simple shooting cooldown
     private float _playerShootTimer = 0f;
@@ -50,7 +51,8 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         // Load textures, fall back to generated placeholders if content is missing
-        _playerTexture = TryLoadTexture("player", Color.CornflowerBlue);
+        // Player placeholder uses a distinct color/size so it's visible against the background
+        _playerTexture = TryLoadTexture("player", Color.White, 48);
         _bulletTexture = TryLoadTexture("bullet", Color.Yellow);
         _enemyATexture = TryLoadTexture("enemyA", Color.Red);
         _enemyBTexture = TryLoadTexture("enemyB", Color.Green);
@@ -63,6 +65,12 @@ public class Game1 : Game
         _enemyFactoryB = new EnemyFactory(64) { EnemyTexture = _enemyBTexture };
         _midBossFactory = new EnemyFactory(4) { EnemyTexture = _midBossTexture };
         _finalBossFactory = new EnemyFactory(2) { EnemyTexture = _finalBossTexture };
+
+        // wire bullet factory & player reference into enemy factories
+        _enemyFactoryA.BulletFactory = _bulletFactory;
+        _enemyFactoryB.BulletFactory = _bulletFactory;
+        _midBossFactory.BulletFactory = _bulletFactory;
+        _finalBossFactory.BulletFactory = _bulletFactory;
 
         // load font if available (add a SpriteFont named DefaultFont to Content to use)
         try
@@ -79,9 +87,18 @@ public class Game1 : Game
 
         // create player
         _player = new Player(_playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height - 80));
+
+        // give factories access to the player for aimed shots
+        _enemyFactoryA.PlayerRef = _player;
+        _enemyFactoryB.PlayerRef = _player;
+        _midBossFactory.PlayerRef = _player;
+        _finalBossFactory.PlayerRef = _player;
+
+        // create a 1x1 white pixel used for hitbox drawing
+        _whitePixel = CreatePlaceholderTexture(Color.White, 1);
     }
 
-    private Texture2D TryLoadTexture(string assetName, Color fallbackColor)
+    private Texture2D TryLoadTexture(string assetName, Color fallbackColor, int size = 32)
     {
         try
         {
@@ -90,7 +107,7 @@ public class Game1 : Game
         catch
         {
             // create a simple square placeholder texture
-            return CreatePlaceholderTexture(fallbackColor, 32);
+            return CreatePlaceholderTexture(fallbackColor, size);
         }
     }
 
@@ -181,6 +198,12 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
         _player.Draw(_spriteBatch);
+        // draw player hitbox when slow
+        if (_player.IsSlow && _whitePixel != null)
+        {
+            var size = 6;
+            _spriteBatch.Draw(_whitePixel, new Rectangle((int)(_player.Position.X - size/2), (int)(_player.Position.Y - size/2), size, size), Color.White);
+        }
         _bulletFactory.DrawAll(_spriteBatch);
         _enemyFactoryA.DrawAll(_spriteBatch);
         _enemyFactoryB.DrawAll(_spriteBatch);

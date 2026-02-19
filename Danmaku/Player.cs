@@ -24,7 +24,9 @@ public class Player
     public void Update(GameTime gt, KeyboardState ks, Viewport viewport)
     {
         var dt = (float)gt.ElapsedGameTime.TotalSeconds;
-        var speed = (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift)) ? SlowSpeed : NormalSpeed;
+        var isSlow = (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift));
+        IsSlow = isSlow;
+        var speed = isSlow ? SlowSpeed : NormalSpeed;
 
         Vector2 move = Vector2.Zero;
         if (ks.IsKeyDown(Keys.W) || ks.IsKeyDown(Keys.Up)) move.Y -= 1;
@@ -50,6 +52,8 @@ public class Player
         var origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
         sb.Draw(Texture, Position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0f);
     }
+
+    public bool IsSlow { get; private set; }
 
     public void Damage(int amount)
     {
